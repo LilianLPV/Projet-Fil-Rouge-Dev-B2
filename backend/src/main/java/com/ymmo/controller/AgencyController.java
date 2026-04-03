@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/agencies")
+@RequestMapping("/api/agencies")
 @CrossOrigin(origins = "*") // autorise les appels depuis le front-end
 public class AgencyController {
 
