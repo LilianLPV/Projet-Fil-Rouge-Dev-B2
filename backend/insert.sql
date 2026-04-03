@@ -1,0 +1,132 @@
+INSERT INTO agency_address (address, city, zip_code) VALUES
+    ('45 Rue de la République',  'Lyon',          '69002'),
+    ('12 Rue Saint-Ferréol',     'Marseille',     '13001'),
+    ('8 Place du Capitole',      'Toulouse',      '31000'),
+    ('3 Rue de la Paix',         'Nice',          '06000'),
+    ('22 Rue Nationale',         'Bordeaux',      '33000'),
+    ('17 Grande Rue',            'Strasbourg',    '67000'),
+    ('5 Rue du Général de Gaulle','Nantes',       '44000'),
+    ('9 Rue de Rivoli',          'Paris',         '75001'),
+    ('31 Rue Paradis',           'Marseille',     '13008'),
+    ('14 Avenue Jean Médecin',   'Nice',          '06000'),
+    ('6 Rue de la Monnaie',      'Lille',         '59000'),
+    ('27 Rue Victor Hugo',       'Montpellier',   '34000');
+
+INSERT INTO agencies (name, description, phone_number, fk_address) VALUES
+    ('Ymmo Lyon',        'Agence Ymmo Lyon — Presqu''île',            '04 72 00 00 01', 2),
+    ('Ymmo Marseille 1', 'Agence Ymmo Marseille Centre',              '04 91 00 00 02', 3),
+    ('Ymmo Toulouse',    'Agence Ymmo Toulouse — Capitole',          '05 61 00 00 03', 4),
+    ('Ymmo Nice',        'Agence Ymmo Nice — Centre ville',          '04 93 00 00 04', 5),
+    ('Ymmo Bordeaux',    'Agence Ymmo Bordeaux — Triangle d''or',    '05 56 00 00 05', 6),
+    ('Ymmo Strasbourg',  'Agence Ymmo Strasbourg — Centre',          '03 88 00 00 06', 7),
+    ('Ymmo Nantes',      'Agence Ymmo Nantes — Île de Nantes',       '02 40 00 00 07', 8),
+    ('Ymmo Paris',       'Agence Ymmo Paris — 1er arrondissement',   '01 40 00 00 08', 9),
+    ('Ymmo Marseille 2', 'Agence Ymmo Marseille — 8e arrondissement','04 91 00 00 09', 10),
+    ('Ymmo Nice 2',      'Agence Ymmo Nice — Jean Médecin',          '04 93 00 00 10', 11),
+    ('Ymmo Lille',       'Agence Ymmo Lille — Centre',               '03 20 00 00 11', 12),
+    ('Ymmo Montpellier', 'Agence Ymmo Montpellier — Comédie',        '04 67 00 00 12', 13);
+
+INSERT INTO users (username, password, email, fk_agency, fk_role) VALUES
+    ('sophie.martin',   '$2b$12$test_hash_agent1', 'sophie.martin@ymmo.fr',   2,  2),
+    ('lucas.bernard',   '$2b$12$test_hash_agent2', 'lucas.bernard@ymmo.fr',   3,  2),
+    ('emma.dubois',     '$2b$12$test_hash_agent3', 'emma.dubois@ymmo.fr',     4,  2),
+    ('thomas.leroy',    '$2b$12$test_hash_agent4', 'thomas.leroy@ymmo.fr',    5,  2),
+    ('clara.moreau',    '$2b$12$test_hash_agent5', 'clara.moreau@ymmo.fr',    6,  2),
+    ('hugo.simon',      '$2b$12$test_hash_agent6', 'hugo.simon@ymmo.fr',      9,  2),
+    ('lea.lambert',     '$2b$12$test_hash_agent7', 'lea.lambert@ymmo.fr',     8,  2),
+    ('pierre.dupont',   '$2b$12$test_hash_cli1',   'pierre.dupont@gmail.com',   NULL, 3),
+    ('marie.curie',     '$2b$12$test_hash_cli2',   'marie.curie@gmail.com',     NULL, 3),
+    ('julien.petit',    '$2b$12$test_hash_cli3',   'julien.petit@gmail.com',    NULL, 3),
+    ('alice.robert',    '$2b$12$test_hash_cli4',   'alice.robert@gmail.com',    NULL, 3),
+    ('maxime.richard',  '$2b$12$test_hash_cli5',   'maxime.richard@gmail.com',  NULL, 3),
+    ('camille.garcia',  '$2b$12$test_hash_cli6',   'camille.garcia@gmail.com',  NULL, 3);
+
+INSERT INTO listing_address (address, city, zip_code) VALUES
+    ('14 Rue de la Joliette',       'Marseille',     '13002'),
+    ('8 Avenue Foch',               'Nice',          '06000'),
+    ('3 Quai de Saône',             'Lyon',          '69001'),
+    ('22 Rue des Carmes',           'Toulouse',      '31000'),
+    ('5 Allée de Tourny',           'Bordeaux',      '33000'),
+    ('18 Rue du Bac',               'Paris',         '75007'),
+    ('9 Rue du Maréchal Foch',      'Strasbourg',    '67000'),
+    ('31 Boulevard Victor Hugo',    'Nantes',        '44000'),
+    ('2 Promenade des Anglais',     'Nice',          '06000'),
+    ('47 Rue Paradis',              'Marseille',     '13008'),
+    ('12 Rue de la Pompe',          'Paris',         '75016'),
+    ('6 Place de la Comédie',       'Montpellier',   '34000'),
+    ('88 Avenue de Bretagne',       'Lille',         '59000'),
+    ('15 Chemin des Collines',      'Aix-en-Provence','13100'),
+    ('4 Rue des Fleurs',            'Lyon',          '69006'),
+    ('27 Boulevard de la Mer',      'Marseille',     '13007'),
+    ('10 Rue du Château',           'Bordeaux',      '33200'),
+    ('33 Avenue de la Gare',        'Toulouse',      '31500'),
+    ('7 Impasse des Roses',         'Nice',          '06100'),
+    ('19 Rue Nationale',            'Lille',         '59800');
+
+INSERT INTO listing_pictures (picture) VALUES
+    ('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800'),
+    ('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800'),
+    ('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800'),
+    ('https://images.unsplash.com/photo-1598228723793-52759bba239c?w=800'),
+    ('https://images.unsplash.com/photo-1505843513577-22bb7d21e455?w=800'),
+    ('https://images.unsplash.com/photo-1494526585095-c41746248156?w=800'),
+    ('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800'),
+    ('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'),
+    ('https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800'),
+    ('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=800'),
+    ('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800'),
+    ('https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800'),
+    ('https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800'),
+    ('https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800'),
+    ('https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800'),
+    ('https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800'),
+    ('https://images.unsplash.com/photo-1523217582562-09d0def993a6?w=800'),
+    ('https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?w=800'),
+    ('https://images.unsplash.com/photo-1416331108676-a22ccb276e35?w=800'),
+    ('https://images.unsplash.com/photo-1497366216548-37526070297c?w=800');
+
+INSERT INTO listings (title, description, price, room_count, energy_rating, land_area, bedroom_count, living_area, floor_number, fk_address, fk_type, fk_picture, fk_status, fk_agency) VALUES
+    ('Appartement T3 lumineux — Marseille Centre', 'Bel appartement T3 au 3e étage, exposé sud. Cuisine équipée, double vitrage, cave et parking inclus. À deux pas du Vieux-Port.', 320000, 3, 'C', NULL, 2, 75.0, 3,   1, 1, 1,  1, 3),
+    ('Villa contemporaine avec piscine — Nice', 'Magnifique villa de plain-pied avec piscine privée et jardin paysager de 800m². Vue mer partielle. Garage double.', 950000, 6, 'B', 800.0, 4, 220.0, 0, 2, 1, 2,  1, 5),
+    ('Appartement T2 vue Saône — Lyon', 'Charmant T2 refait à neuf avec vue dégagée sur la Saône. Parquet massif, cuisine ouverte, balcon.', 265000, 2, 'D', NULL, 1, 48.0, 4,   3, 1, 3,  1, 2),
+    ('Maison de ville 5 pièces — Toulouse', 'Belle maison de ville avec terrasse et jardin de 200m². Idéale famille. Quartier calme proche des écoles.', 420000, 5, 'C', 200.0, 3, 130.0, 0, 4, 1, 4,  2, 4),
+    ('Loft industriel — Bordeaux', 'Superbe loft de 180m² dans ancien entrepôt réhabilité. Hauteur sous plafond 4m, verrières, mezzanine.', 580000, 3, 'B', NULL, 2, 180.0, 1, 5, 1, 5,  1, 6),
+    ('Appartement haussmannien — Paris 7e', 'Exceptionnel appartement haussmannien au 2e étage avec ascenseur. Moulures, parquet point de Hongrie, cheminées.', 1250000, 4, 'E', NULL, 3, 105.0, 2, 6, 1, 6,  1, 9),
+    ('Studio rénové — Strasbourg Centre', 'Studio entièrement rénové, idéal investissement locatif ou premier achat. Proche tram, commerces, université.', 89000,  1, 'C', NULL, 0, 24.0, 3,   7, 1, 7,  1, 7),
+    ('Maison avec vue sur Loire — Nantes', 'Maison familiale avec superbe vue sur la Loire. Terrasse, jardin arboré, garage. Quartier Île de Nantes.', 375000, 5, 'C', 400.0, 3, 115.0, 0, 8, 1, 8,  1, 8),
+    ('Penthouse vue mer — Nice Promenade', 'Penthouse d''exception en dernier étage avec terrasse panoramique de 80m² vue mer. Prestations haut de gamme.', 1800000, 4, 'A', NULL, 3, 160.0, 8, 9, 1, 9,  1, 5),
+    ('Appartement T4 — Marseille 8e', 'Grand T4 familial dans résidence sécurisée. Deux parkings, cave, gardien. Proche plages et commerces.', 445000, 4, 'C', NULL, 3, 92.0, 5,  10, 1, 10, 1, 10),
+    ('Appartement T3 — Paris 16e', 'Beau T3 calme et lumineux dans le 16e. Double exposition, gardien, cave, parking en sous-sol.', 890000, 3, 'D', NULL, 2, 78.0, 3,  11, 1, 11, 1, 9),
+    ('Mas provençal — Aix-en-Provence', 'Authentique mas provençal sur 2 hectares avec piscine, dépendances, oliviers centenaires. Vue imprenable.', 1350000, 7, 'B', 20000.0, 5, 280.0, 0, 14, 1, 14, 1, 1),
+    ('Appartement T2 meublé — Montpellier', 'T2 meublé et équipé, idéal étudiant ou jeune actif. Proche tramway et facultés. Disponible immédiatement.', 750,   2, 'C', NULL, 1, 38.0, 2,  12, 2, 12, 1, 13),
+    ('Studio meublé — Lille Centre', 'Studio meublé refait à neuf. Cuisine équipée, salle de bain moderne. Très bien situé en centre-ville.', 550,   1, 'D', NULL, 0, 22.0, 1,  13, 2, 13, 1, 12),
+    ('Appartement T3 — Lyon 6e', 'Grand T3 dans le quartier prisé du 6e. Parquet, moulures, balcon filant. Cave incluse.', 1350,  3, 'C', NULL, 2, 72.0, 3,  15, 2, 15, 1, 2),
+    ('Villa avec piscine — Marseille 7e', 'Villa de standing à louer pour l''été ou en longue durée. Piscine, jardin, vue mer. Parking 2 voitures.', 3200,  5, 'B', 600.0, 3, 160.0, 0, 16, 2, 16, 1, 3),
+    ('Maison 4 pièces — Bordeaux Bègles', 'Maison familiale avec jardin et terrasse couverte. Garage, cave, 3 chambres. Écoles à proximité.', 1100,  4, 'C', 250.0, 3, 95.0, 0,  17, 2, 17, 1, 6),
+    ('Appartement T2 — Toulouse Capitole', 'T2 idéalement situé à 2 minutes de la place du Capitole. Lumineux, calme sur cour, digicode.', 850,   2, 'D', NULL, 1, 42.0, 2,  18, 2, 18, 1, 4),
+    ('Appartement en viager — Nice', 'Appartement en viager occupé. Bouquet 80 000€, rente mensuelle 600€. Occupante de 78 ans.', 80000, 3, 'E', NULL, 2, 65.0, 2,  19, 3, 19, 1, 5),
+    ('Maison en viager — Lille', 'Maison de ville en viager libre. Bouquet 120 000€, rente mensuelle 800€. Libre immédiatement.', 120000, 4, 'D', 180.0, 3, 88.0, 0, 20, 3, 20, 1, 12);
+
+UPDATE listing_pictures SET fk_listing = id_picture;
+
+INSERT INTO features_listings (fk_feature, fk_listing) VALUES
+    (1, 2), (2, 2), (3, 2),
+    (6, 5),
+    (6, 6), (7, 6), (8, 6),
+    (1, 9), (7, 9), (8, 9), (10, 9),
+    (7, 10), (8, 10),
+    (1, 12), (2, 12), (3, 12), (9, 12),
+    (1, 16), (2, 16), (3, 16),
+    (8, 18),
+    (5, 1),
+    (5, 15);
+
+INSERT INTO applications (title, message, submission_date, fk_status, fk_user, fk_listing) VALUES
+    ('Intérêt pour le T3 Marseille', 'Bonjour, votre annonce m''intéresse beaucoup. Seriez-vous disponible pour une visite ce weekend ?', '2025-01-15', 2, 9,  1),
+    ('Demande de visite — Villa Nice', 'Nous sommes une famille de 4 personnes à la recherche d''une villa. Ce bien nous correspond parfaitement.', '2025-01-18', 1, 10, 2),
+    ('Candidature location T2 Montpellier', 'Étudiant en master 2, CDI étudiant, garant solvable. Disponible pour entrée immédiate.', '2025-01-20', 2, 11, 13),
+    ('Candidature location studio Lille', 'Jeune actif en CDI, salaire 2200€/mois. Références disponibles sur demande.', '2025-01-22', 1, 12, 14),
+    ('Intérêt Penthouse Nice', 'Chef d''entreprise, financement comptant. Souhaite visiter dans les plus brefs délais.', '2025-01-25', 1, 13, 9),
+    ('Candidature T3 Lyon', 'Couple sans enfants, CDI, salaires cumulés 5800€/mois. Très intéressés par ce bien.', '2025-01-28', 3, 14, 15),
+    ('Demande info Mas Aix-en-Provence', 'Pouvez-vous me communiquer les charges annuelles et l''état des dépendances ?', '2025-02-01', 1, 9,  12),
+    ('Candidature Villa Marseille', 'Famille avec 2 enfants, cherchons villa pour juillet-août. Budget OK, références disponibles.', '2025-02-03', 2, 10, 16);

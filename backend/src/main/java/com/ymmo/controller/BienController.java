@@ -22,7 +22,7 @@ public class BienController {
     }
 
     @GetMapping("/{id}")
-    public Bien getById(@PathVariable Long id) {
+    public Bien getById(@PathVariable Integer id) {
         return bienService.findById(id);
     }
 
@@ -32,7 +32,7 @@ public class BienController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         bienService.delete(id);
     }
 }

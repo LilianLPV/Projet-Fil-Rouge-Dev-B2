@@ -18,7 +18,7 @@ public class BienService {
         return bienRepository.findAll();
     }
 
-    public Bien findById(Long id) {
+    public Bien findById(Integer id) {
         return bienRepository.findById(id).orElse(null);
     }
 
@@ -26,7 +26,7 @@ public class BienService {
         return bienRepository.save(bien);
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         bienRepository.deleteById(id);
     }
 }
