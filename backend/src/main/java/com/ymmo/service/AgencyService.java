@@ -14,22 +14,18 @@ public class AgencyService {
         this.agencyRepository = agencyRepository;
     }
 
-    // Récupérer toutes les agences
     public List<Agency> findAll() {
         return agencyRepository.findAll();
     }
 
-    // Récupérer une agence par son id
     public Agency findById(Integer id) {
         return agencyRepository.findById(id).orElse(null);
     }
 
-    // Créer ou modifier une agence
     public Agency save(Agency agency) {
         return agencyRepository.save(agency);
     }
 
-    // Supprimer une agence
     public void delete(Integer id) {
         agencyRepository.deleteById(id);
     }

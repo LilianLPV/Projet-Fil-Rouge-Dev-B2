@@ -17,13 +17,11 @@ public class AgencyController {
         this.agencyService = agencyService;
     }
 
-    // GET /agencies → liste toutes les agences
     @GetMapping
     public List<Agency> getAll() {
         return agencyService.findAll();
     }
 
-    // GET /agencies/1 → détail d'une agence
     @GetMapping("/{id}")
     public ResponseEntity<Agency> getById(@PathVariable Integer id) {
         Agency agency = agencyService.findById(id);
@@ -31,13 +29,11 @@ public class AgencyController {
         return ResponseEntity.ok(agency);
     }
 
-    // POST /agencies → créer une agence
     @PostMapping
-    public Agency create(@RequestBody Agency agency) {
-        return agencyService.save(agency);
+    public ResponseEntity<Agency> create(@RequestBody Agency agency) {
+        return ResponseEntity.status(201).body(agencyService.save(agency));
     }
 
-    // PUT /agencies/1 → modifier une agence
     @PutMapping("/{id}")
     public ResponseEntity<Agency> update(@PathVariable Integer id, @RequestBody Agency agency) {
         if (agencyService.findById(id) == null) return ResponseEntity.notFound().build();
@@ -45,7 +41,6 @@ public class AgencyController {
         return ResponseEntity.ok(agencyService.save(agency));
     }
 
-    // DELETE /agencies/1 → supprimer une agence
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         if (agencyService.findById(id) == null) return ResponseEntity.notFound().build();

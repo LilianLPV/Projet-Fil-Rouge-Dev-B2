@@ -1,0 +1,47 @@
+package com.ymmo.service;
+
+import com.ymmo.model.Agency;
+import com.ymmo.model.Role;
+import com.ymmo.model.User;
+import com.ymmo.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(Integer id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public List<User> findByAgency(Agency agency) {
+        return userRepository.findByAgency(agency);
+    }
+
+    public List<User> findByRole(Role role) {
+        return userRepository.findByRole(role);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    public void delete(Integer id) {
+        userRepository.deleteById(id);
+    }
+}

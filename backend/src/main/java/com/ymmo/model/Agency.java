@@ -13,19 +13,16 @@ public class Agency {
     @Column(name = "id_agency")
     private Integer id;
 
-    @Column(name = "name", nullable = false)
-    private String nom;
+    @Column(nullable = false, length = 150)
+    private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "phone_number")
-    private String telephone;
+    @Column(name = "phone_number", length = 20)
+    private String phoneNumber;
 
-    // Clés étrangères
-    @Column(name = "fk_address")
-    private Integer adresseId;
-
-    @Column(name = "fk_picture")
-    private Integer photoId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_address", nullable = false)
+    private AgencyAddress address;
 }
