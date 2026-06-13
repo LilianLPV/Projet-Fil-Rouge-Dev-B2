@@ -1,9 +1,12 @@
 package com.ymmo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "feature_type")
 @Data
 public class FeatureType {
@@ -16,3 +19,5 @@ public class FeatureType {
     @Column(nullable = false, length = 100)
     private String label;
 }
+
+

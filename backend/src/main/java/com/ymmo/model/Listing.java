@@ -1,5 +1,6 @@
 package com.ymmo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "listings")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Listing {
 
     @Id
@@ -58,6 +60,9 @@ public class Listing {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_picture")
     private ListingPicture mainPicture;
+
+    @OneToMany(mappedBy = "listing", fetch = FetchType.EAGER)
+    private List<ListingPicture> pictures = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_status", nullable = false)

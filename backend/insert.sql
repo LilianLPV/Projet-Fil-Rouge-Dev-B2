@@ -109,6 +109,105 @@ INSERT INTO listings (title, description, price, room_count, energy_rating, land
 
 UPDATE listing_pictures SET fk_listing = id_picture;
 
+-- Galerie : photos d'intérieur adaptées au TYPE de chaque bien.
+-- URLs basées sur mots-clés (loremflickr) : le contenu correspond toujours au mot-clé.
+-- Le paramètre ?lock=N fige l'image (toujours la même au rechargement).
+
+-- Appartements classiques (1, 3, 10, 11, 13, 15, 18, 19)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/kitchen,interior?lock=101'),
+    ('https://loremflickr.com/800/600/livingroom?lock=102'),
+    ('https://loremflickr.com/800/600/bedroom,interior?lock=103'),
+    ('https://loremflickr.com/800/600/bathroom,interior?lock=104'),
+    ('https://loremflickr.com/800/600/apartment,interior?lock=105')
+) AS p(url)
+WHERE l.id_listing IN (1, 3, 10, 11, 13, 15, 18, 19);
+
+-- Villas avec piscine (2, 16)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/villa,luxury?lock=201'),
+    ('https://loremflickr.com/800/600/swimmingpool?lock=202'),
+    ('https://loremflickr.com/800/600/livingroom,modern?lock=203'),
+    ('https://loremflickr.com/800/600/terrace,house?lock=204'),
+    ('https://loremflickr.com/800/600/bathroom,luxury?lock=205')
+) AS p(url)
+WHERE l.id_listing IN (2, 16);
+
+-- Mas provençal (12)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/provence,house?lock=301'),
+    ('https://loremflickr.com/800/600/stone,house?lock=302'),
+    ('https://loremflickr.com/800/600/garden,mediterranean?lock=303'),
+    ('https://loremflickr.com/800/600/livingroom,rustic?lock=304'),
+    ('https://loremflickr.com/800/600/kitchen,rustic?lock=305')
+) AS p(url)
+WHERE l.id_listing = 12;
+
+-- Penthouse de luxe (9)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/penthouse,luxury?lock=401'),
+    ('https://loremflickr.com/800/600/livingroom,luxury?lock=402'),
+    ('https://loremflickr.com/800/600/bedroom,luxury?lock=403'),
+    ('https://loremflickr.com/800/600/bathroom,marble?lock=404'),
+    ('https://loremflickr.com/800/600/cityview,skyline?lock=405')
+) AS p(url)
+WHERE l.id_listing = 9;
+
+-- Loft industriel (5)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/loft,industrial?lock=501'),
+    ('https://loremflickr.com/800/600/industrial,interior?lock=502'),
+    ('https://loremflickr.com/800/600/kitchen,open?lock=503'),
+    ('https://loremflickr.com/800/600/bedroom,loft?lock=504'),
+    ('https://loremflickr.com/800/600/livingroom,industrial?lock=505')
+) AS p(url)
+WHERE l.id_listing = 5;
+
+-- Appartement haussmannien (6)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/paris,apartment?lock=601'),
+    ('https://loremflickr.com/800/600/livingroom,classic?lock=602'),
+    ('https://loremflickr.com/800/600/bedroom,classic?lock=603'),
+    ('https://loremflickr.com/800/600/kitchen,interior?lock=604'),
+    ('https://loremflickr.com/800/600/bathroom,interior?lock=605')
+) AS p(url)
+WHERE l.id_listing = 6;
+
+-- Studios (7, 14)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/studio,apartment?lock=701'),
+    ('https://loremflickr.com/800/600/livingroom,small?lock=702'),
+    ('https://loremflickr.com/800/600/kitchenette?lock=703'),
+    ('https://loremflickr.com/800/600/bathroom,interior?lock=704')
+) AS p(url)
+WHERE l.id_listing IN (7, 14);
+
+-- Maisons familiales (4, 8, 17, 20)
+INSERT INTO listing_pictures (picture, fk_listing)
+SELECT p.url, l.id_listing FROM listings l
+CROSS JOIN (VALUES
+    ('https://loremflickr.com/800/600/house,facade?lock=801'),
+    ('https://loremflickr.com/800/600/livingroom?lock=802'),
+    ('https://loremflickr.com/800/600/bedroom,interior?lock=803'),
+    ('https://loremflickr.com/800/600/kitchen,interior?lock=804'),
+    ('https://loremflickr.com/800/600/garden,house?lock=805')
+) AS p(url)
+WHERE l.id_listing IN (4, 8, 17, 20);
+
 INSERT INTO features_listings (fk_feature, fk_listing) VALUES
     (1, 2), (2, 2), (3, 2),
     (6, 5),

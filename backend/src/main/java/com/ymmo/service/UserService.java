@@ -38,6 +38,21 @@ public class UserService {
     }
 
     public User save(User user) {
+        // Si aucun rôle n'est fourni, assigner le rôle CLIENT (id=3) par défaut
+        if (user.getRole() == null) {
+            Role clientRole = new Role();
+            clientRole.setId(3);
+            user.setRole(clientRole);
+        }
+
+        // Si password est null lors d'une mise à jour, conserver l'ancien mot de passe
+        if (user.getPassword() == null && user.getId() != null) {
+            User existing = userRepository.findById(user.getId()).orElse(null);
+            if (existing != null) {
+                user.setPassword(existing.getPassword());
+            }
+        }
+
         return userRepository.save(user);
     }
 

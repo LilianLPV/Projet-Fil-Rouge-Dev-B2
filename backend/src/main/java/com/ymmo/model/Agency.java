@@ -1,11 +1,13 @@
 package com.ymmo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "agencies")
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Agency {
 
     @Id

@@ -1,10 +1,12 @@
 package com.ymmo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "listing_pictures")
 @Data
 public class ListingPicture {
@@ -22,3 +24,4 @@ public class ListingPicture {
     @JsonIgnore
     private Listing listing;
 }
+
