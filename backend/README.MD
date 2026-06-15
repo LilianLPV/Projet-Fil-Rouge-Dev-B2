@@ -1,256 +1,195 @@
-# Ymmo Backend
+# YMMO — Backend (Spring Boot)
 
-API REST Spring Boot pour la plateforme immobilière Ymmo.
+API REST de la plateforme immobilière YMMO. Expose les biens, agences, utilisateurs, demandes de visite et les statistiques consommées par le frontend React et le service d'analyse Python.
+
+---
+
+## Stack technique
+
+| Élément | Version / Détail |
+|---|---|
+| Langage | Java 17 |
+| Framework | Spring Boot 3.5.13 |
+| Accès données | Spring Data JPA / Hibernate 6 |
+| Base de données | PostgreSQL (driver 42.7.3) |
+| Build | Maven (`spring-boot-maven-plugin`) |
+| Confort dev | Spring Boot DevTools (rechargement à chaud) |
+| Boilerplate | Lombok (`@Data`, constructeurs) |
+| Config | `spring-dotenv` (support fichier `.env`) |
+
+> ⚠️ Spring Security est volontairement **désactivé** (`SecurityAutoConfiguration` exclue dans `application.properties`). L'authentification est gérée côté frontend (voir README frontend).
 
 ---
 
 ## Prérequis
 
-- [Java 17+](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
-- [Maven 3.8+](https://maven.apache.org/download.cgi)
-- [PostgreSQL 14+](https://www.postgresql.org/download/windows/)
+- **JDK 17+**
+- **PostgreSQL 15+** avec une base `ymmo` créée
+- Maven (ou le wrapper `mvnw` fourni)
 
 ---
 
-## 1. Installation de PostgreSQL
+## Installation & démarrage
 
-### Téléchargement
-Rendez-vous sur https://www.postgresql.org/download/windows/ et téléchargez l'installeur.
+### 1. Créer la base de données
 
-### Installation
-Lancez l'installeur et suivez l'assistant :
-- **Port** : laisser `5432` (valeur par défaut)
-- **Mot de passe** : choisissez un mot de passe pour l'utilisateur `postgres` — notez-le, vous en aurez besoin
-- **Locale** : laisser sur la valeur par défaut
-
-L'installation inclut automatiquement **pgAdmin 4** (interface graphique).
-
----
-
-## 2. Création de la base de données
-
-### Via pgAdmin 4
-1. Ouvrez **pgAdmin 4** depuis le menu Démarrer
-2. Dans le panneau gauche : clic droit sur `Databases` → `Create` → `Database`
-3. Nommez la base `ymmo` puis cliquez **Save**
-
-### Exécution du script de création
-1. Cliquez sur la base `ymmo` dans le panneau gauche
-2. Allez dans `Tools` → `Query Tool`
-3. Ouvrez le fichier `script.sql` avec le Bloc-notes, copiez tout le contenu
-4. Collez dans le Query Tool et appuyez sur **F5**
-
-### Injection des données de test (optionnel)
-Répétez l'opération avec le fichier `insert.sql`.
-
----
-
-## 3. Configuration du projet
-
-### Fichier `.env`
-Créez un fichier `.env` à la racine du dossier `backend/` :
-
-```env
-DB_URL=jdbc:postgresql://localhost:5432/ymmo
-DB_USERNAME=postgres
-DB_PASSWORD=votre_mot_de_passe
+```sql
+CREATE DATABASE ymmo;
 ```
 
-
----
-
-## 4. Lancer le projet
+### 2. Charger le schéma et les données
 
 ```bash
-# Se placer dans le dossier backend
-cd backend
+# Schéma (tables, contraintes)
+psql -U postgres -d ymmo -f script.sql
 
-# Lancer le serveur
-mvn clean spring-boot:run
+# Données de démonstration (agences, biens, utilisateurs, photos…)
+psql -U postgres -d ymmo -f insert.sql
 ```
 
-Le serveur démarre sur **http://localhost:8080**
+### 3. Configurer la connexion
+
+Édite `src/main/resources/application.properties` :
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/ymmo
+spring.datasource.username=postgres
+spring.datasource.password=VOTRE_MOT_DE_PASSE
+spring.jpa.hibernate.ddl-auto=validate
+```
+
+> `ddl-auto=validate` : Hibernate **vérifie** que le schéma correspond aux entités mais ne le modifie pas. Le schéma doit donc être créé au préalable via `script.sql`.
+
+### 4. Lancer le serveur
+
+```bash
+mvn spring-boot:run
+# ou avec le wrapper :
+./mvnw spring-boot:run
+```
+
+API disponible sur **http://localhost:8080**.
 
 ---
 
-## 5. Routes disponibles
+## Structure du projet
 
-### Biens immobiliers (`/api/listings`)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/listings` | Liste tous les biens |
-| GET | `/api/listings/{id}` | Détail d'un bien |
-| GET | `/api/listings?city=Paris` | Filtrer par ville |
-| GET | `/api/listings?maxPrice=200000` | Filtrer par prix max |
-| GET | `/api/listings/agency/{id}` | Biens d'une agence |
+```
+backend/
+├── src/main/java/com/ymmo/
+│   ├── YmmoBackendApplication.java   # Point d'entrée Spring Boot
+│   ├── model/          # Entités JPA (Listing, Agency, User, Application…)
+│   ├── repository/     # Interfaces Spring Data JPA + requêtes @Query
+│   ├── service/        # Logique métier (résolution des références, défauts…)
+│   └── controller/     # Contrôleurs REST (@RestController)
+├── src/main/resources/
+│   └── application.properties
+├── script.sql          # Création du schéma (DDL)
+├── insert.sql          # Données de démonstration (DML)
+└── pom.xml
+```
+
+### Couches
+
+- **model** — Entités annotées JPA (`@Entity`, `@ManyToOne`, `@OneToMany`…). Lombok `@Data` génère getters/setters.
+- **repository** — `JpaRepository<T, Integer>` + méthodes dérivées et requêtes `@Query` (JPQL et SQL natif).
+- **service** — Recharge les entités liées depuis la BDD avant sauvegarde (évite les références transientes), applique les valeurs par défaut (rôle CLIENT, statut « En attente », date de publication…).
+- **controller** — Mappe les routes HTTP. `@CrossOrigin(origins = "*")` pour autoriser le frontend.
+
+---
+
+## Endpoints REST
+
+### Biens — `/api/listings`
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/listings` | Liste des biens (filtres `?city=` ou `?maxPrice=`) |
+| GET | `/api/listings/{id}` | Détail d'un bien (avec galerie photos) |
+| GET | `/api/listings/agency/{agencyId}` | Biens d'une agence |
 | POST | `/api/listings` | Créer un bien |
 | PUT | `/api/listings/{id}` | Modifier un bien |
 | DELETE | `/api/listings/{id}` | Supprimer un bien |
 
-### Agences (`/api/agencies`)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/agencies` | Liste toutes les agences |
+### Agences — `/api/agencies`
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/agencies` | Liste des agences |
 | GET | `/api/agencies/{id}` | Détail d'une agence |
-| POST | `/api/agencies` | Créer une agence |
-| PUT | `/api/agencies/{id}` | Modifier une agence |
-| DELETE | `/api/agencies/{id}` | Supprimer une agence |
+| POST / PUT / DELETE | `/api/agencies/{id}` | CRUD agence |
 
-### Utilisateurs (`/api/users`)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/users` | Liste tous les utilisateurs |
-| GET | `/api/users/{id}` | Détail d'un utilisateur |
-| POST | `/api/users` | Créer un utilisateur |
-| PUT | `/api/users/{id}` | Modifier un utilisateur |
-| DELETE | `/api/users/{id}` | Supprimer un utilisateur |
+### Utilisateurs — `/api/users`
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/users` | Liste des utilisateurs |
+| GET | `/api/users/{id}` | Détail |
+| POST | `/api/users` | Créer un compte (rôle CLIENT par défaut) |
+| PUT | `/api/users/{id}` | Modifier (conserve le mot de passe si non fourni) |
+| DELETE | `/api/users/{id}` | Supprimer |
 
-### Candidatures (`/api/applications`)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/applications` | Liste toutes les candidatures |
-| GET | `/api/applications/{id}` | Détail d'une candidature |
-| GET | `/api/applications/user/{id}` | Candidatures d'un utilisateur |
-| GET | `/api/applications/listing/{id}` | Candidatures d'un bien |
-| POST | `/api/applications` | Soumettre une candidature |
-| PUT | `/api/applications/{id}` | Modifier une candidature |
-| DELETE | `/api/applications/{id}` | Supprimer une candidature |
+### Demandes de visite — `/api/applications`
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/applications` | Toutes les demandes |
+| GET | `/api/applications/user/{userId}` | Demandes d'un client |
+| GET | `/api/applications/listing/{listingId}` | Demandes sur un bien |
+| POST | `/api/applications` | Créer une demande (statut « En attente ») |
+| PUT | `/api/applications/{id}` | Changer le statut (Acceptée / Refusée…) |
+| DELETE | `/api/applications/{id}` | Supprimer |
 
-### Caractéristiques (`/api/features`)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/features` | Liste toutes les caractéristiques |
-| GET | `/api/features/{id}` | Détail d'une caractéristique |
-| POST | `/api/features` | Créer une caractéristique |
-| DELETE | `/api/features/{id}` | Supprimer une caractéristique |
+### Données de référence — `/api`
+| Méthode | Endpoint | Description |
+|---|---|---|
+| GET | `/api/listing-types` | Types de biens |
+| GET | `/api/listing-statuses` | Statuts de biens |
+| GET | `/api/features` | Équipements |
 
-### Données de référence (lecture seule)
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/api/listing-types` | Types de bien (Vente, Location, Viager) |
-| GET | `/api/listing-statuses` | Statuts (Disponible, Vendu, Loué...) |
-| GET | `/api/application-statuses` | Statuts de candidature |
-| GET | `/api/feature-types` | Types de caractéristiques |
-| GET | `/api/roles` | Rôles utilisateurs |
-
----
-
-## 6. Exemple de requête POST
-
-**Créer un bien** — `POST /api/listings`
-
-```json
-{
-  "title": "Appartement T3 Paris",
-  "description": "Beau appartement lumineux",
-  "price": 350000,
-  "roomCount": 3,
-  "bedroomCount": 2,
-  "livingArea": 65.5,
-  "energyRating": "B",
-  "address": { "id": 1 },
-  "type":    { "id": 1 },
-  "status":  { "id": 1 },
-  "agency":  { "id": 1 }
-}
-```
-
-> La `publicationDate` est remplie automatiquement avec la date du jour si non fournie.
+### Statistiques — `/api/stats`
+| Endpoint | Description |
+|---|---|
+| `/api/stats/kpis` | KPIs globaux (total biens, demandes, agences, prix moyen) |
+| `/api/stats/by-type` | Nb de biens par type |
+| `/api/stats/by-status` | Nb de biens par statut |
+| `/api/stats/by-agency` | Nb de biens par agence |
+| `/api/stats/avg-price-by-city` | Prix moyen par ville |
+| `/api/stats/dpe` | Distribution des classes DPE |
+| `/api/stats/listings-by-month` | Publications sur 12 mois |
+| `/api/stats/top-listings` | Biens les plus demandés |
+| `/api/stats/price-stats` | Prix min / moyen / max par type |
 
 ---
 
-## 7. Structure du projet
+## Requêtes @Query notables
 
-```
-backend/
-├── src/
-│   └── main/
-│       ├── java/com/ymmo/
-│       │   ├── YmmoBackendApplication.java     ← point d'entrée
-│       │   ├── controller/                     ← routes HTTP (REST)
-│       │   │   ├── AgencyController.java
-│       │   │   ├── ListingController.java
-│       │   │   ├── UserController.java
-│       │   │   ├── ApplicationController.java
-│       │   │   ├── FeatureController.java
-│       │   │   └── ReferenceController.java
-│       │   ├── service/                        ← logique métier
-│       │   │   ├── AgencyService.java
-│       │   │   ├── ListingService.java
-│       │   │   ├── UserService.java
-│       │   │   ├── ApplicationService.java
-│       │   │   ├── FeatureService.java
-│       │   │   └── ReferenceService.java
-│       │   ├── repository/                     ← accès base de données (JPA)
-│       │   └── model/                          ← entités JPA (15 entités)
-│       │       ├── Agency.java
-│       │       ├── AgencyAddress.java
-│       │       ├── AgencyPicture.java
-│       │       ├── Listing.java
-│       │       ├── ListingAddress.java
-│       │       ├── ListingType.java
-│       │       ├── ListingStatus.java
-│       │       ├── ListingPicture.java
-│       │       ├── Feature.java
-│       │       ├── FeatureType.java
-│       │       ├── User.java
-│       │       ├── Role.java
-│       │       ├── Permission.java
-│       │       ├── Application.java
-│       │       └── ApplicationStatus.java
-│       └── resources/
-│           └── application.properties          ← configuration Spring
-├── script.sql                                  ← schéma de la base de données
-├── insert.sql                                  ← données de test
-├── .env                                        ← variables d'environnement (à créer)
-└── pom.xml                                     ← dépendances Maven
+Le repository `ListingRepository` combine **JPQL** et **SQL natif PostgreSQL** :
+
+```java
+// JPQL — prix moyen par ville
+@Query("SELECT l.address.city, AVG(l.price) FROM Listing l " +
+       "WHERE l.address.city IS NOT NULL GROUP BY l.address.city")
+List<Object[]> findAvgPriceByCity();
+
+// SQL natif — prix médian (fonction PostgreSQL PERCENTILE_CONT)
+@Query(value = "SELECT a.city, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY l.price) " +
+               "FROM listings l JOIN listing_address a ON l.fk_address = a.id_address " +
+               "GROUP BY a.city", nativeQuery = true)
+List<Object[]> findMedianPriceByCity();
+
+// SQL natif — publications par mois (TO_CHAR + INTERVAL)
+@Query(value = "SELECT TO_CHAR(publication_date, 'YYYY-MM'), COUNT(*) FROM listings " +
+               "WHERE publication_date >= NOW() - INTERVAL '12 months' " +
+               "GROUP BY 1 ORDER BY 1", nativeQuery = true)
+List<Object[]> findListingsByMonth();
 ```
 
 ---
 
-## 8. Architecture
+## Notes & bonnes pratiques
 
-```
-Client (Postman / Frontend)
-        ↓  Requête HTTP
-   REST Controller        → reçoit et répond aux requêtes HTTP
-        ↓
-     Service              → logique métier
-        ↓
-   Repository             → accès base de données (Spring Data JPA)
-        ↓
-  Base PostgreSQL          → stockage des données
-```
+- **Mot de passe** : le champ `password` du modèle `User` utilise `@JsonProperty(access = WRITE_ONLY)` — il est accepté en entrée (création) mais **jamais renvoyé** dans les réponses JSON.
+- **Références imbriquées** : à la sauvegarde, les services rechargent les entités liées (type, statut, agence, listing…) depuis la BDD à partir de leur `id` pour éviter l'erreur Hibernate « not-null property references a null or transient value ».
+- **CORS** : `origins = "*"` en développement — à restreindre au domaine du frontend en production.
+- **Secrets** : le mot de passe BDD est en clair dans `application.properties`. En production, utiliser un fichier `.env` (support `spring-dotenv` déjà inclus) ou des variables d'environnement.
 
 ---
 
-## 9. Stack technique
-
-| Technologie | Version | Rôle |
-|-------------|---------|------|
-| Java | 17 | Langage |
-| Spring Boot | 3.5.13 | Framework web |
-| Spring Data JPA | - | ORM / accès BDD |
-| Hibernate | 6.6 | Implémentation JPA |
-| PostgreSQL | 17 | Base de données |
-| Lombok | - | Réduction du code boilerplate |
-| Maven | 3.8+ | Gestion des dépendances |
-| Spring Dotenv | 4.0 | Chargement du fichier `.env` |
-
----
-
-## 10. Modèle de données
-
-Le projet contient **15 tables** organisées autour des entités principales :
-
-- **agencies** — agences immobilières
-- **listings** — biens immobiliers (vente, location, viager)
-- **users** — utilisateurs (admin, agent, client)
-- **applications** — candidatures sur les biens
-- **features** — caractéristiques des biens (piscine, jardin, garage...)
-- **roles / permissions** — gestion des droits
-
-Les relations entre tables sont modélisées via des annotations JPA :
-- `@ManyToOne` pour les clés étrangères simples
-- `@ManyToMany` pour les tables de jointure (`features_listings`, `roles_permissions`)
-- `@JsonIgnore` pour éviter les boucles de sérialisation JSON
+*YMMO Backend — Projet fil rouge B2 DEV — Ynov Campus*
